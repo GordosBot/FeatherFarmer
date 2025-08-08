@@ -5,9 +5,9 @@
 
 * Start this script in a chicken pen
 * The script will automatically attack chickens.
-* It will only loot Feathers.
+* It will only loot Feathers and Bones.
+* It will automatically bury any bones it picks up before fighting the next chicken.
 * Make sure you have a weapon equipped.
-* Based on Feather Farmer from Erekyu
 --]]
 
 local API = require('api')
@@ -148,10 +148,10 @@ local function attack_chicken(chicken)
 end
 
 --- Loots an item from the ground
---- @param loot_item table The loot item to pick up
-local function loot_item(loot_item)
-    print("Looting " .. loot_item.Name)
-    API.DoAction_G_Items_Direct(0x3e, API.OFF_ACT_Pickup_route, loot_item)
+--- @param item table The loot item to pick up
+local function pickup_loot(item)
+    print("Looting " .. item.Name)
+    API.DoAction_G_Items_Direct(0x3e, API.OFF_ACT_Pickup_route, item)
     random_sleep(CONFIG.DELAYS.LOOT)
     count_feathers_collected()
 end
@@ -212,7 +212,7 @@ end
 local function handle_looting_state()
     local loot_item = find_loot()
     if loot_item then
-        loot_item(loot_item)
+        pickup_loot(loot_item)
     else
         print("No more loot found. Resetting kill counter and continuing.")
         state.kill_counter = 0  -- Reset counter after collecting all loot
